@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorteo de Equipos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pitch-dark:#0B2E1F;
+    --pitch-mid:#123D28;
+    --pitch-line:#1E5C3A;
+    --chalk:#F4F1E4;
+    --chalk-dim:#B9C9BE;
+    --jersey-yellow:#F2B705;
+    --card-red:#D7263D;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      repeating-linear-gradient(90deg, var(--pitch-mid) 0 80px, var(--pitch-dark) 80px 160px);
+    color:var(--chalk);
+    font-family:'Work Sans', sans-serif;
+    min-height:100vh;
+    padding:32px 16px 64px;
+  }
+  .wrap{max-width:720px;margin:0 auto;}
+
+  header{text-align:center;margin-bottom:28px;}
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    letter-spacing:0.25em;
+    font-size:12px;
+    color:var(--jersey-yellow);
+    text-transform:uppercase;
+  }
+  h1{
+    font-family:'Anton', sans-serif;
+    font-weight:400;
+    font-size:clamp(34px, 8vw, 56px);
+    letter-spacing:0.02em;
+    margin:6px 0 4px;
+    color:var(--chalk);
+    text-shadow: 0 2px 0 rgba(0,0,0,0.25);
+  }
+  .sub{color:var(--chalk-dim);font-size:14px;}
+
+  .panel{
+    background:rgba(0,0,0,0.18);
+    border:1px solid rgba(244,241,228,0.12);
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:20px;
+  }
+
+  .add-row{display:flex;gap:8px;margin-bottom:14px;}
+  input[type=text]{
+    flex:1;
+    padding:12px 14px;
+    border-radius:8px;
+    border:1px solid rgba(244,241,228,0.25);
+    background:rgba(244,241,228,0.06);
+    color:var(--chalk);
+    font-size:15px;
+    font-family:'Work Sans',sans-serif;
+    outline:none;
+  }
+  input[type=text]::placeholder{color:var(--chalk-dim);}
+  input[type=text]:focus{border-color:var(--jersey-yellow);}
+
+  button{
+    font-family:'Work Sans',sans-serif;
+    cursor:pointer;
+    border:none;
+  }
+  .add-btn{
+    background:var(--jersey-yellow);
+    color:var(--pitch-dark);
+    font-weight:700;
+    width:48px;
+    border-radius:8px;
+    font-size:20px;
+    line-height:1;
+  }
+  .add-btn:hover{filter:brightness(1.08);}
+
+  select{
+    padding:0 10px;
+    border-radius:8px;
+    border:1px solid rgba(244,241,228,0.25);
+    background:rgba(244,241,228,0.06);
+    color:var(--chalk);
+    font-size:13px;
+    font-family:'Work Sans',sans-serif;
+    outline:none;
+  }
+  select:focus{border-color:var(--jersey-yellow);}
+  select option{background:var(--pitch-dark);color:var(--chalk);}
+
+  .gk-tag{
+    font-family:'Space Mono',monospace;
+    font-size:10px;
+    font-weight:700;
+    background:var(--card-red);
+    color:var(--chalk);
+    padding:2px 6px;
+    border-radius:5px;
+    letter-spacing:0.04em;
+  }
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;min-height:36px;}
+  .chip{
+    display:flex;align-items:center;gap:8px;
+    background:rgba(244,241,228,0.08);
+    border:1px solid rgba(244,241,228,0.2);
+    padding:7px 8px 7px 12px;
+    border-radius:999px;
+    font-size:14px;
+    animation:pop 0.18s ease;
+  }
+  @keyframes pop{from{transform:scale(0.85);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .chip button{
+    background:transparent;
+    color:var(--chalk-dim);
+    font-size:15px;
+    width:20px;height:20px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .chip button:hover{background:var(--card-red);color:white;}
+
+  .count-row{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:14px;
+    font-family:'Space Mono',monospace;
+    font-size:13px;
+    color:var(--chalk-dim);
+  }
+
+  .kickoff{
+    width:100%;
+    background:var(--jersey-yellow);
+    color:var(--pitch-dark);
+    font-family:'Anton',sans-serif;
+    font-size:20px;
+    letter-spacing:0.04em;
+    padding:16px;
+    border-radius:10px;
+    margin-top:16px;
+    transition:transform 0.1s ease, filter 0.15s ease;
+  }
+  .kickoff:hover:not(:disabled){filter:brightness(1.06);transform:translateY(-1px);}
+  .kickoff:active:not(:disabled){transform:translateY(0px) scale(0.99);}
+  .kickoff:disabled{opacity:0.4;cursor:not-allowed;}
+
+  .reset-link{
+    display:block;
+    text-align:center;
+    background:transparent;
+    color:var(--chalk-dim);
+    font-size:13px;
+    text-decoration:underline;
+    margin:14px auto 0;
+    padding:4px;
+  }
+  .reset-link:hover{color:var(--chalk);}
+
+  .teams{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+    margin-top:6px;
+  }
+  .team-card{
+    background:var(--pitch-mid);
+    border:1px solid rgba(244,241,228,0.15);
+    border-radius:12px;
+    padding:16px;
+    position:relative;
+    overflow:hidden;
+  }
+  .team-card::before{
+    content:'';
+    position:absolute;top:0;left:0;right:0;height:4px;
+    background:var(--jersey-yellow);
+  }
+  .team-name{
+    font-family:'Anton',sans-serif;
+    font-size:18px;
+    letter-spacing:0.03em;
+    margin-bottom:10px;
+    color:var(--jersey-yellow);
+  }
+  .player-row{
+    display:flex;align-items:center;gap:10px;
+    padding:8px 0;
+    border-bottom:1px dashed rgba(244,241,228,0.12);
+    opacity:0;
+    transform:rotateX(-90deg);
+    animation:flipin 0.45s ease forwards;
+  }
+  .player-row:last-child{border-bottom:none;}
+  @keyframes flipin{
+    to{opacity:1;transform:rotateX(0deg);}
+  }
+  .num{
+    font-family:'Space Mono',monospace;
+    font-weight:700;
+    font-size:13px;
+    background:var(--jersey-yellow);
+    color:var(--pitch-dark);
+    width:24px;height:24px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .pname{font-size:15px;font-weight:500;}
+
+  .bench{
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1px solid rgba(244,241,228,0.12);
+    font-size:13px;
+    color:var(--chalk-dim);
+  }
+  .bench b{color:var(--chalk);}
+
+  .empty-hint{
+    text-align:center;
+    color:var(--chalk-dim);
+    font-size:13px;
+    padding:20px 0;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .chip, .player-row{animation:none !important; opacity:1; transform:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Pichanga del sábado</div>
+    <h1>SORTEO DE EQUIPOS</h1>
+    <div class="sub">Agrega a los jugadores y deja que el azar arme los equipos de 4</div>
+  </header>
+
+  <div class="panel">
+    <div class="add-row">
+      <input type="text" id="nameInput" placeholder="Nombre del jugador" maxlength="24">
+      <select id="roleInput">
+        <option value="campo">Jugador de campo</option>
+        <option value="arquero">Arquero</option>
+      </select>
+      <button class="add-btn" id="addBtn">+</button>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="count-row">
+      <span id="countText">0 jugadores</span>
+      <span id="teamsPreview">0 equipos completos</span>
+    </div>
+    <button class="kickoff" id="sortBtn" disabled>SORTEAR EQUIPOS</button>
+    <button class="reset-link" id="resetBtn" style="display:none">Reiniciar todo</button>
+  </div>
+
+  <div id="results"></div>
+</div>
+
+<script>
+  const players = []; // {name, role: 'campo'|'arquero'}
+  const nameInput = document.getElementById('nameInput');
+  const roleInput = document.getElementById('roleInput');
+  const addBtn = document.getElementById('addBtn');
+  const chipsEl = document.getElementById('chips');
+  const countText = document.getElementById('countText');
+  const teamsPreview = document.getElementById('teamsPreview');
+  const sortBtn = document.getElementById('sortBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const resultsEl = document.getElementById('results');
+
+  function addPlayer(){
+    const name = nameInput.value.trim();
+    if(!name) return;
+    players.push({ name, role: roleInput.value });
+    nameInput.value = '';
+    renderChips();
+    nameInput.focus();
+  }
+
+  function removePlayer(idx){
+    players.splice(idx,1);
+    renderChips();
+  }
+
+  function renderChips(){
+    chipsEl.innerHTML = '';
+    players.forEach((p, idx) => {
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.innerHTML = `<span>${escapeHtml(p.name)}</span>` +
+        (p.role === 'arquero' ? `<span class="gk-tag">ARQ</span>` : '');
+      const rm = document.createElement('button');
+      rm.textContent = '×';
+      rm.onclick = () => removePlayer(idx);
+      chip.appendChild(rm);
+      chipsEl.appendChild(chip);
+    });
+    const gkCount = players.filter(p => p.role === 'arquero').length;
+    countText.textContent = players.length + (players.length === 1 ? ' jugador' : ' jugadores') +
+      (gkCount ? ` · ${gkCount} ${gkCount===1?'arquero':'arqueros'}` : '');
+    const fullTeams = Math.floor(players.length/4);
+    teamsPreview.textContent = fullTeams + (fullTeams===1 ? ' equipo completo' : ' equipos completos');
+    sortBtn.disabled = players.length < 4;
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  function sortTeams(){
+    const numTeams = Math.floor(players.length/4);
+
+    let goalkeepers = shuffle(players.filter(p => p.role === 'arquero'));
+    let fieldPlayers = shuffle(players.filter(p => p.role !== 'arquero'));
+
+    // Un arquero por equipo como máximo; si sobran arqueros, pasan a la bolsa general
+    const assignedGks = goalkeepers.slice(0, numTeams);
+    const extraGks = goalkeepers.slice(numTeams);
+    const pool = shuffle(fieldPlayers.concat(extraGks));
+
+    const teams = [];
+    for(let t = 0; t < numTeams; t++){
+      const team = [];
+      if(assignedGks[t]) team.push(assignedGks[t]);
+      while(team.length < 4 && pool.length){
+        team.push(pool.shift());
+      }
+      teams.push(team);
+    }
+    const bench = pool; // lo que no alcanzó a completar equipo
+
+    resultsEl.innerHTML = '';
+    const grid = document.createElement('div');
+    grid.className = 'teams';
+
+    teams.forEach((team, tIdx) => {
+      const card = document.createElement('div');
+      card.className = 'team-card';
+      const label = document.createElement('div');
+      label.className = 'team-name';
+      label.textContent = 'EQUIPO ' + String.fromCharCode(65 + tIdx);
+      card.appendChild(label);
+
+      team.forEach((p, pIdx) => {
+        const row = document.createElement('div');
+        row.className = 'player-row';
+        row.style.animationDelay = (tIdx*0.08 + pIdx*0.07) + 's';
+        const badge = p.role === 'arquero'
+          ? `<span class="num" style="background:var(--card-red);color:var(--chalk)">🧤</span>`
+          : `<span class="num">${pIdx+1}</span>`;
+        row.innerHTML = `${badge}<span class="pname">${escapeHtml(p.name)}</span>`;
+        card.appendChild(row);
+      });
+      grid.appendChild(card);
+    });
+
+    resultsEl.appendChild(grid);
+
+    if(bench.length){
+      const benchDiv = document.createElement('div');
+      benchDiv.className = 'panel bench';
+      benchDiv.innerHTML = `<b>Suplentes / rotan:</b> ${bench.map(p => escapeHtml(p.name) + (p.role==='arquero' ? ' (ARQ)' : '')).join(', ')}`;
+      resultsEl.appendChild(benchDiv);
+    }
+
+    resetBtn.style.display = 'block';
+  }
+
+  addBtn.onclick = addPlayer;
+  nameInput.addEventListener('keydown', e => { if(e.key === 'Enter') addPlayer(); });
+  sortBtn.onclick = sortTeams;
+  resetBtn.onclick = () => {
+    resultsEl.innerHTML = '';
+    resetBtn.style.display = 'none';
+  };
+
+  renderChips();
+</script>
+</body>
+</html>
