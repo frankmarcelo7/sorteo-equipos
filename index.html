@@ -77,10 +77,11 @@
     }
 
     .add-row {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: 1fr 1fr 48px;
       gap: 8px;
       margin-bottom: 14px;
+      align-items: stretch;
     }
 
     .format-row {
@@ -97,13 +98,18 @@
       .panel { padding: 16px; margin-bottom: 16px; }
       .add-row {
         display: grid;
-        grid-template-columns: 1fr 48px;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
         gap: 8px;
       }
+      #nameInput {
+        grid-column: 1 / 2;
+      }
       #roleInput {
-        grid-column: 1 / -1;
+        grid-column: 2 / 3;
       }
       .add-btn {
+        grid-column: 1 / -1;
         width: 100%;
         min-height: 48px;
       }
