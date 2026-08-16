@@ -98,20 +98,27 @@
       .panel { padding: 16px; margin-bottom: 16px; }
       .add-row {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto auto;
-        gap: 8px;
+        grid-template-columns: 1fr auto 48px;
+        grid-template-rows: auto;
+        gap: 6px;
+        align-items: stretch;
       }
       #nameInput {
-        grid-column: 1 / 2;
+        grid-column: 1;
+        min-width: 0;
       }
       #roleInput {
-        grid-column: 2 / 3;
+        grid-column: 2;
+        padding: 0 6px;
+        font-size: 13px;
+        min-width: 72px;
+        max-width: 90px;
       }
       .add-btn {
-        grid-column: 1 / -1;
-        width: 100%;
+        grid-column: 3;
+        width: 48px;
         min-height: 48px;
+        flex-shrink: 0;
       }
       .chips {
         justify-content: center;
