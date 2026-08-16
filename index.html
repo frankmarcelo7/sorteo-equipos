@@ -513,7 +513,15 @@
       const name = nameInput.value.trim();
       if (!name) return;
 
-      const role = roleInput.value || 'campo';
+      const role = roleInput.value;
+
+      // Obligar a seleccionar un rol
+      if (!role) {
+        roleInput.style.borderColor = 'var(--card-red)';
+        setTimeout(() => { roleInput.style.borderColor = ''; }, 2000);
+        roleInput.focus();
+        return;
+      }
 
       // Limitar cantidad de arqueros según el formato seleccionado
       if (role === 'arquero') {
