@@ -78,7 +78,7 @@
 
     .add-row {
       display: grid;
-      grid-template-columns: 1fr 1fr 48px;
+      grid-template-columns: 1fr minmax(0, max-content) 48px;
       gap: 8px;
       margin-bottom: 14px;
       align-items: stretch;
@@ -110,9 +110,9 @@
       #roleInput {
         grid-column: 2;
         padding: 0 6px;
-        font-size: 13px;
-        min-width: 72px;
-        max-width: 90px;
+        font-size: 14px;
+        min-width: 0;
+        max-width: 140px;
       }
       .add-btn {
         grid-column: 3;
@@ -493,11 +493,15 @@
 
     function addPlayer() {
       const name = nameInput.value.trim();
-      if (!name) return;
-      
-      const role = roleInput.value || 'campo';
+      const role = roleInput.value;
+      if (!name || !role) {
+        if (!role) {
+          roleInput.style.borderColor = 'var(--card-red)';
+          setTimeout(() => roleInput.style.borderColor = '', 1500);
+        }
+        return;
+      }
       players.push({ name, role });
-      
       nameInput.value = '';
       roleInput.value = '';
       renderChips();
