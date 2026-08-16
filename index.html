@@ -438,7 +438,8 @@
     <div class="panel">
       <div class="add-row">
         <input type="text" id="nameInput" placeholder="Nombre del jugador" maxlength="24">
-        <select id="roleInput">
+        <select id="roleInput" required>
+          <option value="" disabled selected hidden>Rol</option>
           <option value="campo">Jugador de campo</option>
           <option value="arquero">Arquero</option>
         </select>
@@ -480,8 +481,12 @@
     function addPlayer() {
       const name = nameInput.value.trim();
       if (!name) return;
-      players.push({ name, role: roleInput.value });
+      
+      const role = roleInput.value || 'campo';
+      players.push({ name, role });
+      
       nameInput.value = '';
+      roleInput.value = '';
       renderChips();
       nameInput.focus();
     }
