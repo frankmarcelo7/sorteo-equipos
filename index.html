@@ -468,7 +468,7 @@
 
     <div class="panel">
       <div class="add-row">
-        <input type="text" id="nameInput" placeholder="Nombre del jugador" maxlength="24">
+        <input type="text" id="nameInput" placeholder="Nombre" maxlength="24">
         <select id="roleInput" required>
           <option value="" disabled selected hidden>Rol</option>
           <option value="campo">Jugador</option>
@@ -536,7 +536,7 @@
           roleInput.value = '';
           setTimeout(() => {
             nameInput.style.borderColor = '';
-            nameInput.placeholder = 'Nombre del jugador';
+            nameInput.placeholder = 'Nombre';
           }, 2500);
           return;
         }
